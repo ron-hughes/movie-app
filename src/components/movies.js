@@ -1,14 +1,15 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 
 
 
 export default function Movies(props) {
-console.log(props.data)
+
 
     
 
   return (
       <>
+      {console.log(props.movieData)}
      </>
   )
 

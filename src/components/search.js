@@ -4,26 +4,24 @@ import Movies from "./movies";
 import { Formik, Form, Field } from "formik";
 
 export default function Search() {
-
+    //creating closure
+    let [movieData, setMovieData] = useState();
     // Button Function
   function submitButton(values) {
       // search for movie based on specific values entered into search bar
     axios
       .get(
-        `http://www.omdbapi.com/?apikey=d793ee5b&t=${values.search}&plot=full`
+        `http://www.omdbapi.com/?apikey=d793ee5b&t=${values.search}&Season=${values.searchSeason}&plot=full`
       )
       .then(res => {
-          console.log(res)
-        const data = res.data;
-
-        console.log(data)
+        //   console.log(res)    
         
+        setMovieData(res.data)
      
-      })
+     })
       .catch(err => {
         console.log("Err", err);
-      });
-     
+      });  
   }
 
   return (
@@ -44,7 +42,7 @@ export default function Search() {
           }}
         >
           <Formik
-            initialValues={{ search: "" }}
+            initialValues={{ search: "", searchSeason: "" }}
             onSubmit={values => {
               submitButton(values);
             }}
@@ -57,6 +55,12 @@ export default function Search() {
                   placeholder="Search Movies"
                   style={{ width: "200px" }}
                 />
+                 <Field
+                  name="searchSeason"
+                  value={values.searchSeason}
+                  placeholder="Search Season"
+                  style={{ width: "200px" }}
+                />
                 <button type="submit" style={{ background: "#ff5e13" }}>
                   Lets Go!
                 </button>
@@ -65,7 +69,8 @@ export default function Search() {
           />
         </div>
       </div>
-      
+    
+      <Movies movieData={movieData}/>
     </>
   );
 }
