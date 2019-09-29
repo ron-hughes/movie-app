@@ -1,76 +1,42 @@
-import React, { useState } from "react";
-import axios from "axios";
-import Movies from "./movies";
-import { Formik, Form, Field } from "formik";
+import React, { useState } from 'react';
+import axios from 'axios';
 
-export default function Search() {
-    //creating closure
-    let [movieData, setMovieData] = useState();
-    // Button Function
-  function submitButton(values) {
-      // search for movie based on specific values entered into search bar
-    axios
-      .get(
-        `http://www.omdbapi.com/?apikey=d793ee5b&t=${values.search}&Season=${values.searchSeason}&plot=full`
-      )
+import Movies from './movies';
+
+export default function SearchForm() {
+
+  const [input, setInput] = useState()
+  const [data, setData] = useState()
+
+  const handleChange = e => {
+    setInput(e.target.value)
+    console.log(input)
+  }
+
+  const handleSubmit = e => {
+    e.preventDefault()
+    axios.get(`http://www.omdbapi.com/?i=tt3896198&apikey=a9758f47&s=${input}`)
       .then(res => {
-        //   console.log(res)    
-        
-        setMovieData(res.data)
-     
-     })
+        setData(res.data.Search)
+        console.log(res.data.Search)
+      })
       .catch(err => {
-        console.log("Err", err);
-      });  
+        console.log(`*** Error: ${err}`)
+      })
   }
 
   return (
-    <>
-      <div
-        style={{
-          background: "#C4C4C4",
-          height: "274px",
-          width: "333px",
-          margin: "100px auto",
-          borderRadius: "29px"
-        }}
-      >
-        <div
-          style={{
-            marginTop: "100px",
-            padding: "70px"
-          }}
-        >
-          <Formik
-            initialValues={{ search: "", searchSeason: "" }}
-            onSubmit={values => {
-              submitButton(values);
-            }}
-            render={({ handleSubmit, values, touched, errors }) => (
-              <Form onSubmit={handleSubmit}>
-                {errors.search && touched.search && <p>{errors.search}</p>}
-                <Field
-                  name="search"
-                  value={values.search}
-                  placeholder="Search Movies"
-                  style={{ width: "200px" }}
-                />
-                 <Field
-                  name="searchSeason"
-                  value={values.searchSeason}
-                  placeholder="Search Season"
-                  style={{ width: "200px" }}
-                />
-                <button type="submit" style={{ background: "#ff5e13" }}>
-                  Lets Go!
-                </button>
-              </Form>
-            )}
-          />
-        </div>
-      </div>
-    
-      <Movies movieData={movieData}/>
-    </>
-  );
+    <div>
+      <form onSubmit={handleSubmit}>
+        <input 
+          type="text"
+          placeholder="Search Movie Titles"
+          name="search"
+          onChange={handleChange}
+        />
+        <button type="submit">Submit</button>
+      </form>
+      <Movies data={data} />
+    </div>
+  )
 }
